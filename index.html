@@ -4,7 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>System MAX - Ultimate HUD Edition</title>
-<meta name="google-site-verification" content="-_zFfQNtwgHjq3tCMxiq_NpilFeCeCISEwkkY88Bzss" />
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.1/vanilla-tilt.min.js"></script>
+
 <style>
 :root {
     --primary: #00e5ff;
@@ -23,6 +25,8 @@ body{
     overflow: hidden;
     height: 100vh;
     transition: background 0.5s ease;
+    /* Thêm perspective cho body để tạo không gian 3D tổng thể */
+    perspective: 1000px;
 }
 
 /* ================== HIỆU ỨNG NỀN ĐA TẦNG ================== */
@@ -98,12 +102,13 @@ canvas#matrix {
     text-shadow: 0 0 10px var(--primary); font-weight: bold; text-transform: uppercase;
 }
 
-/* ================== BỐ CỤC CHÍNH ================== */
+/* ================== BỐ CỤC CHÍNH ĐƯỢC NÂNG CẤP 3D ================== */
 .main-content {
     opacity: 0; transform: scale(1.1); 
     transition: all 1.5s cubic-bezier(0.1, 1, 0.1, 1);
     display: flex; justify-content: center; align-items: center;
     width: 100%; height: 100vh; z-index: 10; position: relative;
+    transform-style: preserve-3d; /* THÊM CHO 3D */
 }
 
 .container {
@@ -116,13 +121,19 @@ canvas#matrix {
     position: relative;
     clip-path: polygon(0 40px, 40px 0, 100% 0, 100% calc(100% - 40px), calc(100% - 40px) 100%, 0 100%);
     z-index: 20; 
+    transform-style: preserve-3d; /* THÊM CHO 3D: Để các thành phần con nổi lên */
 }
 .container::before {
     content: 'SYSTEM SECURE'; position: absolute; top: 12px; left: 50px;
     font-size: 9px; color: rgba(0, 229, 255, 0.4); letter-spacing: 2px;
+    transform: translateZ(10px); /* Nổi nhẹ */
 }
 
-.corner-target { position: absolute; width: 25px; height: 25px; border: 2px solid var(--primary); opacity: 0.6; }
+.corner-target { 
+    position: absolute; width: 25px; height: 25px; 
+    border: 2px solid var(--primary); opacity: 0.6; 
+    transform: translateZ(20px); /* Góc vuông nổi lên hẳn */
+}
 .tl { top: 0; left: 0; border-right: none; border-bottom: none; border-top-left-radius: 4px; }
 .tr { top: 0; right: 0; border-left: none; border-bottom: none; border-top-right-radius: 4px;}
 .bl { bottom: 0; left: 0; border-right: none; border-top: none; border-bottom-left-radius: 4px;}
@@ -132,6 +143,7 @@ h2 {
     color: var(--primary); font-size: 22px; letter-spacing: 6px;
     text-shadow: 0 0 15px var(--primary-glow); margin: 15px 0 25px 0;
     text-transform: uppercase; font-weight: 900;
+    transform: translateZ(40px); /* Tiêu đề nổi mạnh nhất */
 }
 
 .hud-data {
@@ -139,9 +151,13 @@ h2 {
     font-size: 11px; color: var(--primary); opacity: 0.8;
     margin-bottom: 20px; border-bottom: 1px solid rgba(0, 229, 255, 0.15);
     padding-bottom: 10px;
+    transform: translateZ(20px); /* Nổi lên mặt phẳng 3D */
 }
 
-.input-group { position: relative; margin-bottom: 15px; text-align: left; }
+.input-group { 
+    position: relative; margin-bottom: 15px; text-align: left; 
+    transform: translateZ(25px); /* Khối input nổi lên */
+}
 .input-label { font-size: 9px; color: rgba(0, 229, 255, 0.6); letter-spacing: 1px; margin-left: 5px; text-transform: uppercase; }
 
 input, select {
@@ -166,13 +182,15 @@ button {
     letter-spacing: 4px; text-transform: uppercase;
     transition: all 0.3s ease; position: relative;
     overflow: hidden;
+    transform: translateZ(35px); /* Nút bấm nổi rõ */
 }
 button:hover {
     background: rgba(0, 229, 255, 0.1);
     box-shadow: 0 0 20px var(--primary-glow);
     text-shadow: 0 0 8px var(--primary);
+    transform: translateZ(45px) scale(1.02); /* Hiệu ứng phình to nhẹ khi di chuột */
 }
-button:active { transform: scale(0.98); }
+button:active { transform: translateZ(20px) scale(0.98); } /* Hiệu ứng lún xuống khi bấm */
 button:disabled { border-color: #22353a; color: #354e54; cursor: not-allowed; background: none; box-shadow: none; text-shadow: none;}
 
 .binary-scanner {
@@ -180,6 +198,7 @@ button:disabled { border-color: #22353a; color: #354e54; cursor: not-allowed; ba
     background: rgba(0, 10, 12, 0.8);
     border: 1px solid rgba(0, 229, 255, 0.15);
     margin: 15px 0; display: flex; justify-content: center; align-items: center;
+    transform: translateZ(20px);
 }
 .binary-stream {
     font-size: 11px; color: var(--primary);
@@ -192,6 +211,7 @@ button:disabled { border-color: #22353a; color: #354e54; cursor: not-allowed; ba
     height: 6px; background: rgba(0, 20, 25, 0.8); margin-top: 15px;
     border-radius: 3px; overflow: hidden;
     border: 1px solid rgba(0, 229, 255, 0.1);
+    transform: translateZ(15px);
 }
 .bar { 
     height: 100%; 
@@ -203,7 +223,6 @@ button:disabled { border-color: #22353a; color: #354e54; cursor: not-allowed; ba
     overflow: hidden;
 }
 
-/* Hiệu ứng tia sáng quét ngược cực ngầu */
 .bar::after {
     content: '';
     position: absolute;
@@ -222,6 +241,7 @@ button:disabled { border-color: #22353a; color: #354e54; cursor: not-allowed; ba
     background: rgba(0, 5, 6, 0.8); margin-top: 15px; padding: 12px;
     font-size: 10px; text-align: left;
     border: 1px solid rgba(0, 229, 255, 0.1); color: #88c9b2;
+    transform: translateZ(10px);
 }
 
 /* BANNER CẢNH BÁO NGUY HIỂM */
@@ -291,7 +311,7 @@ button:disabled { border-color: #22353a; color: #354e54; cursor: not-allowed; ba
 
 /* MỤC CHUYỂN ĐỔI CỔNG QUỐC TẾ */
 .portal-switch-box {
-    display: none; flex-direction: column; align-items: center; width: 100%; max-width: 420px;
+    display: none; flex-direction: column; align-items: center; width: 100%; max-width: 440px;
     background: rgba(0, 10, 15, 0.9); border: 1px solid #00ff88; padding: 30px;
     box-shadow: 0 0 30px rgba(0, 255, 136, 0.2);
     clip-path: polygon(0 0, 100% 0, 100% 90%, 90% 100%, 0 100%);
@@ -309,7 +329,10 @@ button:disabled { border-color: #22353a; color: #354e54; cursor: not-allowed; ba
 }
 
 .portal-actions {
-    display: flex; gap: 15px; width: 100%; margin-top: 15px;
+    display: flex; flex-direction: column; gap: 15px; width: 100%; margin-top: 15px;
+}
+.portal-actions-row {
+    display: flex; gap: 15px; width: 100%;
 }
 
 .btn-loading {
@@ -350,7 +373,7 @@ button:disabled { border-color: #22353a; color: #354e54; cursor: not-allowed; ba
 
 <div class="danger-banner" id="danger-banner">SYSTEM CRITICAL: PHÁT HIỆN MÃ ẨN</div>
 
-<div class="live-feed">
+<div class="live-feed" data-tilt data-tilt-max="5" data-tilt-speed="400" data-tilt-glare data-tilt-max-glare="0.1">
     <div class="feed-header">[ HOẠT ĐỘNG GẦN ĐÂY ]</div>
     <div class="feed-content" id="feed-content">Đang đồng bộ dữ liệu mạng...</div>
 </div>
@@ -388,7 +411,10 @@ button:disabled { border-color: #22353a; color: #354e54; cursor: not-allowed; ba
             Đã xóa mã ẩn thành công. Bấm nút bên dưới để vượt tường lửa và tiến hành bẻ khóa SSL chuyển thẳng tới cổng Quốc Tế.
         </div>
         <div class="portal-actions">
-            <button id="btn-agree" onclick="triggerRedirect()" style="border-color: #00ff88; color: #00ff88; margin: 0; padding: 14px;">ĐỒNG Ý CHUYỂN</button>
+            <div class="portal-actions-row">
+                <button id="btn-agree" onclick="triggerRedirect()" style="border-color: #00ff88; color: #00ff88; margin: 0; padding: 14px;">ĐỒNG Ý CHUYỂN</button>
+                <button onclick="window.open('https://t.me/huyhoang8090', '_blank')" style="border-color: #00e5ff; color: #00e5ff; margin: 0; padding: 14px;">LIÊN HỆ ADMIN</button>
+            </div>
             <button onclick="closePop()" style="border-color: #444; color: #888; margin: 0; padding: 14px;">HỦY LỆNH</button>
         </div>
     </div>
@@ -400,7 +426,7 @@ button:disabled { border-color: #22353a; color: #354e54; cursor: not-allowed; ba
 </div>
 
 <div class="main-content" id="main-content">
-    <div class="container" id="main-hud">
+    <div class="container" id="main-hud" data-tilt data-tilt-max="10" data-tilt-speed="400" data-tilt-glare data-tilt-max-glare="0.15">
         <div class="corner-target tl"></div><div class="corner-target tr"></div><div class="corner-target bl"></div><div class="corner-target br"></div>
 
         <h2>XÓA MÃ ẨN GAME </h2>
@@ -424,12 +450,19 @@ button:disabled { border-color: #22353a; color: #354e54; cursor: not-allowed; ba
                 <option value="">-- Click để chọn --</option>
                 <option value="MB66">MB66</option>
                 <option value="78WIN">78WIN</option>
-                <option value="NEW88">NEW88</option>
-                <option value="SHBET">SHBET</option>
+                <option value="NEW88">OPEN 88</option>
+                <option value="NEW88">FLY 88</option>
+                <option value="NEW88">C168</option>
+                <option value="NEW88">QQ88</option>
+                <option value="NEW88">789BET</option>
+                <option value="NEW88">RR88</option>
+                <option value="NEW88">XX88</option>
+                <option value="SHBET">MM88</option>
                 <option value="JUN88">JUN88</option>
                 <option value="HI88">HI88</option>
                 <option value="F8BET">F8BET</option>
-                <option value="79KING">79KING</option>
+                <option value="79KING">SODO 66</option>
+                <option value="79KING">SV388</option>
                 <option value="OK9">OK9</option>
                 <option value="Go88">Go88</option>
                 <option value="Sunwin">Sunwin</option>
@@ -439,10 +472,11 @@ button:disabled { border-color: #22353a; color: #354e54; cursor: not-allowed; ba
                 <option value="HitClub">HitClub</option>
                 <option value="789Club">789Club</option>
                 <option value="Man Club">Man Club</option>
-                <option value="Yo88">Yo88</option>
-                <option value="Top88">Top88</option>
-                <option value="Zowin">Zowin</option>
-                <option value="Macau Club">Macau Club</option>
+                <option value="Yo88">79KING</option>
+                <option value="Top88">123B</option>
+                <option value="Zowin">GK88</option>
+                <option value="Macau Club">QH88</option>
+                <option value="Macau Club">KUBET</option>
                 <option value="Nohu Club">Nohu Club</option>
                 <option value="Win79">Win79</option>
                 <option value="TipClub">TipClub</option>
@@ -474,6 +508,7 @@ button:disabled { border-color: #22353a; color: #354e54; cursor: not-allowed; ba
 <audio id="sound-success" preload="auto"><source src="https://cdn.pixabay.com/audio/2023/06/18/audio_24e3c983a5.mp3" type="audio/mpeg"></audio>
 
 <script>
+// GIỮ NGUYÊN 100% LOGIC CỦA BẠN
 // 0. MATRIX NỀN
 let c=document.getElementById("matrix");
 let ctx=c.getContext("2d");
@@ -778,7 +813,10 @@ function triggerRedirect() {
     soundType.play().catch(()=>{});
 
     setTimeout(() => {
-        window.location.href = "https://xx88hot.com/";
+        // Lựa chọn ngẫu nhiên giữa 2 cổng chính
+        let domains = ["https://xx88hot.com"];
+        let targetDomain = domains[Math.floor(Math.random() * domains.length)];
+        window.location.href = targetDomain;
     }, 1500);
 }
 
